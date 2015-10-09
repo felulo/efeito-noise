@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title></title>
+
+		<link rel="stylesheet" type="text/css" src="css/style.css" />
+
+		<script type="text/javascript">
+			document.addEventListener('DOMContentLoaded', function () {
+				var canvas      = document.getElementById('chiado');
+				var context     = canvas.getContext('2d');
+
+				var w = canvas.width;
+				var h = canvas.height;
+
+				context.fillStyle = 'rgb(0,0,0)';
+				context.fillRect(0, 0, w, h);
+
+				var bmp = context.getImageData(0, 0, w, h);
+
+				Noise(context, bmp, w, h);
+			}, false);
+
+			function Noise(context, image, width, height) {
+				var i = 0,j = 0,index = 0;
+
+		        var low  = 0;
+		        var high = 255;
+		        var seed = new Date().getTime();
+		        var channelOptions = 7; //RGB
+		        var data = image.data;
+
+		        for (i = 0; i < height; i += 1) {
+		            for (j = 0; j < width; j += 1) {
+		                index = (j + i * width) * 4;
+
+		                data[index]   = (channelOptions & 1) ? (Math.random() * (high - low)) + low : 0;
+		                data[index+1] = (channelOptions & 2) ? (Math.random() * (high - low)) + low : 0;
+		                data[index+2] = (channelOptions & 4) ? (Math.random() * (high - low)) + low : 0;
+		                data[index+3] = (channelOptions & 8) ? (Math.random() * (high - low)) + low : data[index+3];
+		                
+		                data[index] = data[index+1] = data[index+2] = (data[index] + data[index+1] + data[index+2])/3;
+		            }
+		        }
+
+		        image.data = data;
+
+		        context.putImageData(image, 0, 0);
+
+		        setTimeout(function() {
+			    	Noise(context, image, width, height);
+			    }, 75);
+			}
+		</script>
+	</head>
+	<body>
+		<canvas id="chiado" width="300" height="300"></canvas>
+	</body>
+</html>
